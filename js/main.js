@@ -93,6 +93,11 @@
     }
   });
 
+  // Hero headline shows right away (not scroll-driven)
+  requestAnimationFrame(function () {
+    document.querySelectorAll("[data-instant]").forEach(function (el) { el.classList.add("is-visible"); });
+  });
+
   /* ---------------- Scroll reveal ---------------- */
   var revealTargets = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window) {
@@ -148,7 +153,7 @@
   });
 
   /* ---------------- WhatsApp direct links ---------------- */
-  var directMessage = "Olá, Scheila! Quero conversar sobre uma palestra.";
+  var directMessage = "Olá, Scheilamar! Quero conversar sobre uma palestra.";
   var directUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(directMessage);
   var waDirectLink = document.getElementById("wa-direct-link");
   var waDirectBtn = document.getElementById("wa-direct-btn");
@@ -159,7 +164,7 @@
 
   var waAtipicalBtn = document.getElementById("wa-atipical-btn");
   if (waAtipicalBtn) {
-    var atipicalMessage = "Olá! Vi o site da Scheila e quero saber mais sobre a Atipical.";
+    var atipicalMessage = "Olá! Vi o site da Scheilamar e quero saber mais sobre a Atipical.";
     waAtipicalBtn.setAttribute("href", "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(atipicalMessage));
   }
 
@@ -195,7 +200,7 @@
       var mensagem = data.get("mensagem");
 
       var lines = [
-        "Olá, Scheila! Quero conversar sobre uma palestra.",
+        "Olá, Scheilamar! Quero conversar sobre uma palestra.",
         "",
         "Nome: " + nome,
         "Cargo/Função: " + cargo,
@@ -216,18 +221,85 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ---------------- Subtle hero parallax on pointer (desktop only) ---------------- */
-  var heroFrame = document.querySelector(".hero-media-frame");
-  var hero = document.querySelector(".hero");
-  if (heroFrame && hero && window.matchMedia("(min-width: 1024px)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    hero.addEventListener("pointermove", function (e) {
-      var rect = hero.getBoundingClientRect();
-      var x = (e.clientX - rect.left) / rect.width - 0.5;
-      var y = (e.clientY - rect.top) / rect.height - 0.5;
-      heroFrame.style.transform = "translate(" + (x * -10) + "px, " + (y * -8) + "px)";
+  /* ---------------- Prática: passos revelados no scroll ---------------- */
+  (function () {
+    var wrapEl = document.getElementById("practice-steps");
+    if (!wrapEl) return;
+    var steps = Array.prototype.slice.call(wrapEl.querySelectorAll(".practice-step"));
+    var closing = wrapEl.querySelector(".practice-closing");
+    var fill = wrapEl.querySelector(".practice-line-fill");
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var ticking = false;
+
+    function update() {
+      ticking = false;
+      var trigger = window.innerHeight * 0.62;
+      var current = -1;
+      steps.forEach(function (step, i) {
+        var r = step.getBoundingClientRect();
+        var revealed = reduce || r.top + r.height * 0.3 < trigger;
+        step.classList.toggle("is-revealed", revealed);
+        if (revealed) current = i;
+      });
+      steps.forEach(function (step, i) { step.classList.toggle("is-current", i === current); });
+      if (closing) {
+        var cr = closing.getBoundingClientRect();
+        closing.classList.toggle("is-revealed", reduce || cr.top < trigger + 40);
+      }
+      if (fill) {
+        var wr = wrapEl.getBoundingClientRect();
+        var lineEl = wrapEl.querySelector(".practice-line");
+        var max = lineEl ? lineEl.getBoundingClientRect().height : wr.height;
+        var lineTop = lineEl ? lineEl.getBoundingClientRect().top : wr.top;
+        var h = Math.max(0, Math.min(max, trigger - lineTop));
+        fill.style.setProperty("--fill", (reduce ? max : h) + "px");
+      }
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  })();
+
+  /* ---------------- Para quem: abas + CTA dinâmico ---------------- */
+  (function () {
+    var root = document.getElementById("audience-tabs");
+    if (!root) return;
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+    var panels = Array.prototype.slice.call(root.querySelectorAll('[role="tabpanel"]'));
+    var cta = document.getElementById("tabs-cta");
+    var ctaLabel = document.getElementById("tabs-cta-label");
+
+    function select(tab, focus) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.setAttribute("tabindex", on ? "0" : "-1");
+      });
+      panels.forEach(function (p) {
+        var on = p.id === tab.getAttribute("aria-controls");
+        p.hidden = !on;
+        p.classList.toggle("is-active", on);
+      });
+      if (ctaLabel) ctaLabel.textContent = tab.getAttribute("data-label");
+      if (cta) cta.setAttribute("data-cta-tipo", tab.getAttribute("data-tipo"));
+      if (focus) tab.focus();
+      var list = tab.parentElement;
+      if (list && list.scrollWidth > list.clientWidth) {
+        // scroll only the tab strip (scrollIntoView would also shift the page sideways)
+        list.scrollTo({ left: tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
+      }
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () { select(tab, false); });
+      tab.addEventListener("keydown", function (e) {
+        var k = e.key, n = tabs.length, j = -1;
+        if (k === "ArrowRight") j = (i + 1) % n;
+        else if (k === "ArrowLeft") j = (i - 1 + n) % n;
+        else if (k === "Home") j = 0;
+        else if (k === "End") j = n - 1;
+        if (j > -1) { e.preventDefault(); select(tabs[j], true); }
+      });
     });
-    hero.addEventListener("pointerleave", function () {
-      heroFrame.style.transform = "translate(0,0)";
-    });
-  }
+  })();
 })();
