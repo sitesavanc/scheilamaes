@@ -310,6 +310,22 @@
     charts.concat(counters).forEach(function (el) { cio.observe(el); });
   })();
 
+  /* ---------------- Vídeo do YouTube sob demanda ---------------- */
+  document.querySelectorAll("[data-yt]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      var id = a.getAttribute("data-yt");
+      var start = a.getAttribute("data-start") || "0";
+      var frame = document.createElement("iframe");
+      frame.src = "https://www.youtube-nocookie.com/embed/" + id + "?start=" + start + "&autoplay=1&rel=0";
+      frame.title = a.getAttribute("aria-label") || "Vídeo";
+      frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      frame.setAttribute("allowfullscreen", "");
+      a.innerHTML = "";
+      a.appendChild(frame);
+    }, { once: true });
+  });
+
   /* ---------------- Footer year ---------------- */
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();

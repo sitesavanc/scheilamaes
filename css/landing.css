@@ -283,3 +283,26 @@
 
 .donut { display: flex; flex-direction: column; align-items: center; }
 .donut-cap { width: 210px; max-width: 80vw; text-align: center; }
+
+/* ---------- vídeo (YouTube com carregamento sob demanda) ---------- */
+.lp-video { background: var(--graphite); color: var(--offwhite); }
+.lp-video-grid { display: grid; gap: 2.4rem; grid-template-columns: 1fr; align-items: center; }
+.lp-video-frame { margin: 0; }
+.yt-facade { position: relative; display: block; aspect-ratio: 16/9; border-radius: var(--radius-lg); overflow: hidden; background: #000; box-shadow: 0 24px 60px rgba(0,0,0,.4); }
+.yt-facade img { width: 100%; height: 100%; object-fit: cover; opacity: .85; transition: opacity var(--dur-med) var(--ease), transform var(--dur-slow) var(--ease); }
+.yt-facade:hover img { opacity: 1; transform: scale(1.03); }
+.yt-facade iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.yt-play {
+  position: absolute; top: 50%; left: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; background: var(--yellow); color: var(--graphite);
+  box-shadow: 0 0 30px 4px rgba(237,218,138,.45);
+}
+.yt-play svg { width: 34px; height: 34px; margin-left: 4px; }
+.yt-badge { position: absolute; left: 1rem; bottom: 1rem; padding: .35em .8em; border-radius: 99px; background: rgba(27,25,23,.78); font-size: .72rem; font-weight: 700; color: var(--offwhite); }
+.lp-video-cap { margin-top: .9rem; font-size: .8rem; color: var(--gray-mid); line-height: 1.5; }
+@media (min-width: 900px) { .lp-video-grid { grid-template-columns: .9fr 1.1fr; gap: 4rem; } }
+@media (max-width: 767px) { .lp-video-text { text-align: center; } .lp-video .lp-link { margin-inline: auto; } }
+
+/* botões longos (CTA de cada público) quebram linha em vez de estourar a tela */
+.lp-hero .hero-grid { grid-template-columns: minmax(0, 1fr); }
+.lp-hero .hero-ctas .btn, .lp-final .btn, .lp-steps-cta { white-space: normal; text-align: center; justify-content: center; line-height: 1.3; }
