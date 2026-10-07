@@ -398,6 +398,7 @@ em, .italic { font-style: italic; }
 .hero-text .copy { max-width: 52ch; margin-bottom: 1.8rem; }
 .hero-signature { font-family: var(--font-serif); font-style: italic; color: var(--yellow); font-size: 1.15em; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 1rem; }
+.br-mobile { display: none; }
 
 .floating-badge {
   position: absolute;
@@ -755,10 +756,19 @@ em, .italic { font-style: italic; }
 /* ---------- CTA final ---------- */
 .cta-final {
   position: relative;
-  background: linear-gradient(180deg, rgba(30,28,26,.55), rgba(30,28,26,.88)), url('../assets/img/palestra-4.jpg') center/cover no-repeat;
+  overflow: hidden;
+  background: linear-gradient(180deg, #25221f, #1b1917);
   color: var(--offwhite);
   text-align: center;
   padding-block: clamp(5rem, 10vw, 8rem);
+}
+.cta-final::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(27,25,23,0) 0%, rgba(27,25,23,0) 34%, rgba(27,25,23,.82) 58%, #1b1917 74%),
+    linear-gradient(rgba(27,25,23,.28), rgba(27,25,23,.28)),
+    url('../assets/img/mic.jpg') center top / cover no-repeat;
 }
 .cta-final .container { max-width: 820px; }
 .cta-final h2 { margin-bottom: 1.2rem; }
@@ -980,7 +990,7 @@ em, .italic { font-style: italic; }
 @media (max-width: 767px) {
   #apresentacao .split-media img {
     aspect-ratio: 1/1;
-    object-position: center 10%;
+    object-position: center 26%;
   }
 
   .audience-card {
@@ -1215,3 +1225,105 @@ em, .italic { font-style: italic; }
 @media (min-width: 1024px) and (min-width: 0px) {
   .about-grid-shift { margin-inline-start: -6%; }
 }
+
+/* ============================================================
+   AJUSTES — hero, botão "A palestra", CTA final (Mic)
+   ============================================================ */
+@media (max-width: 767px) {
+  .hero-ctas { justify-content: center; }
+  .hero-ctas .btn { margin-inline: auto; }
+  .br-mobile { display: inline; }
+  .btn.btn-wrap {
+    display: flex; width: fit-content; max-width: 100%;
+    margin-inline: auto;
+    justify-content: center; text-align: center;
+    white-space: normal; line-height: 1.25;
+    font-size: .78rem; padding: .62em 1.3em;
+  }
+  .cta-final { padding-top: min(104vw, 24rem); }
+  .cta-final::before { background-position: center top, center, 50% 0; }
+}
+@media (min-width: 768px) {
+  .cta-final { text-align: left; padding-block: clamp(5.5rem, 9vw, 8.5rem); }
+  .cta-final .container { max-width: var(--container-max); }
+  .cta-final .container > * { max-width: 34rem; }
+  .cta-final::before {
+    left: auto; width: min(56%, 760px);
+    background:
+      linear-gradient(90deg, #1b1917 0%, rgba(27,25,23,.55) 28%, rgba(27,25,23,0) 62%),
+      linear-gradient(180deg, rgba(27,25,23,.0) 70%, rgba(27,25,23,.55) 100%),
+      linear-gradient(rgba(27,25,23,.18), rgba(27,25,23,.18)),
+      url('../assets/img/mic.jpg') 50% 22% / cover no-repeat;
+  }
+}
+
+/* ============================================================
+   MENU SUSPENSO — "Para quem é"
+   ============================================================ */
+.main-nav .has-sub { position: relative; }
+.sub-toggle {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .875rem; font-weight: 600; color: var(--gray-light);
+  padding-block: .3rem; cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+.sub-toggle:hover, .has-sub.is-open > .sub-toggle { color: var(--offwhite); }
+.sub-toggle svg { width: 12px; height: 12px; transition: transform var(--dur-fast) var(--ease); }
+.has-sub.is-open > .sub-toggle svg { transform: rotate(180deg); }
+.main-nav .sub-menu {
+  display: block;
+  position: absolute; top: calc(100% + .9rem); left: 50%;
+  width: 19rem; padding: .6rem;
+  border-radius: var(--radius-md);
+  background: rgba(36,34,32,.92);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 24px 50px rgba(0,0,0,.35);
+  opacity: 0; visibility: hidden;
+  transform: translate(-50%, 8px);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), visibility var(--dur-fast);
+}
+.main-nav .sub-menu::before { content: ""; position: absolute; inset: -1rem 0 100% 0; }
+.has-sub.is-open > .sub-menu { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.main-nav .sub-menu li { margin: 0; }
+.main-nav .sub-menu a {
+  display: flex; flex-direction: column; gap: .15rem;
+  padding: .7rem .9rem; border-radius: var(--radius-sm);
+  font-size: .9rem; color: var(--offwhite);
+}
+.main-nav .sub-menu a::after { display: none; }
+.main-nav .sub-menu a small { font-size: .74rem; font-weight: 500; color: var(--gray-mid); }
+.main-nav .sub-menu a:hover, .main-nav .sub-menu a[aria-current="page"] { background: rgba(237,218,138,.12); color: var(--yellow); }
+.main-nav .sub-menu .sub-all { margin-top: .3rem; padding-top: .3rem; border-top: 1px solid rgba(255,255,255,.1); }
+.main-nav .sub-menu .sub-all a { font-size: .8rem; color: var(--yellow); flex-direction: row; justify-content: space-between; }
+
+/* mobile */
+.mobile-nav .m-sub { display: flex; flex-direction: column; align-items: center; gap: .9rem; }
+.m-sub-toggle {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-family: var(--font-serif); font-size: 1.75rem; color: var(--offwhite);
+}
+.m-sub-toggle svg { width: 16px; height: 16px; transition: transform var(--dur-fast) var(--ease); }
+.m-sub.is-open .m-sub-toggle svg { transform: rotate(180deg); }
+.m-sub-list {
+  display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-med) var(--ease);
+  width: 100%;
+}
+.m-sub.is-open .m-sub-list { grid-template-rows: 1fr; }
+.m-sub-list > div { overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: .8rem; }
+.mobile-nav .m-sub-list a { font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; color: var(--yellow); }
+.mobile-nav .m-sub-list > div { padding-block: .4rem; }
+
+/* menu mobile: cabe em telas baixas, mesmo com o submenu aberto */
+.mobile-nav { gap: 1.35rem; padding: 5.5rem 1.5rem 2rem; overflow-y: auto; justify-content: center; justify-content: safe center; }
+.mobile-nav a, .m-sub-toggle { font-size: 1.6rem; }
+.mobile-nav .btn-primary { margin-top: .6rem; color: var(--graphite); font-family: var(--font-sans); font-size: 1rem; }
+.mobile-nav .m-sub-list a { font-size: 1.05rem; }
+
+/* links para as páginas por público */
+.tab-more { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.2rem; font-size: .875rem; font-weight: 800; color: var(--brown); border-bottom: 1.5px solid currentColor; padding-bottom: .1rem; }
+.tab-more svg { width: 14px; height: 14px; transition: transform var(--dur-fast) var(--ease); }
+.tab-more:hover svg { transform: translateX(3px); }
+.audience-more { display: inline-block; margin-top: 1rem; margin-left: .2rem; font-size: .85rem; font-weight: 800; color: var(--brown); border-bottom: 1.5px solid currentColor; }
+@media (max-width: 767px) { .audience-more { display: block; width: fit-content; margin: 1rem auto 0; } }
